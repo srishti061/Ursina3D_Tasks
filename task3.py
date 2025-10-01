@@ -21,32 +21,30 @@ speed = 5
 DirectionalLight().look_at(Vec3(1,-1,-1))
 AmbientLight(color=color.rgba(100,100,100,0.5))
 
-# Track door state (open or closed)
+# Track door state
 door_open = False
 
 def update():
-    global door_open
-    
     # Player movement
     direction = Vec3(
         held_keys['d'] - held_keys['a'],
         0,
         held_keys['w'] - held_keys['s']
     ).normalized()
-
     player.position += direction * time.dt * speed
-
-    # --- Door disappears/reappears ---
-    if player.intersects(door).hit:
-        if held_keys['e'] and not door_open:  # Open (disappear)
-            door.enabled = False
-            door_open = True
-        elif held_keys['q'] and door_open:    # Close (reappear)
-            door.enabled = True
-            door_open = False
 
     # Rotating cube interaction
     if player.intersects(rotating_cube).hit:
         rotating_cube.rotation_y += 100 * time.dt
+
+def input(key):
+    global door_open
+    if player.intersects(door).hit:
+        if key == 'e' and not door_open:
+            door.enabled = False
+            door_open = True
+        elif key == 'q' and door_open:
+            door.enabled = True
+            door_open = False
 
 app.run()
